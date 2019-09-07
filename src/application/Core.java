@@ -21,25 +21,23 @@ public class Core implements Constants {
 	private double Z_inJ[] = new double[NUMBER_OF_INTERMEDITE_ENTRIES];
 	private double Y_inK[] = new double[NUMBER_OF_EXITS];
 	
-	private double correctionFactorJ[] = new double[NUMBER_OF_EXITS];
-	private double correctionFactorK[] = new double[NUMBER_OF_INTERMEDITE_ENTRIES];
+	private double correctionFactorJ[] = new double[NUMBER_OF_INTERMEDITE_ENTRIES];
+	private double correctionFactorK[] = new double[NUMBER_OF_EXITS];
 	
 	private List<File> allFiles = new ArrayList<File>();
-	private static int currentTarget = 0;
+	private static int currentTarget = -1;
 	
 	public void testNeuralNetwork()  throws IOException {
-		readOneFile();
-		
+		System.out.println("Iniciado Teste do Arquivo");
+		readOneFile();		
+	
 		summationWeights();
-		issuesCalculate();
-		//adjustWeights();
-		
-		for(int k=0; k<NUMBER_OF_EXITS; k++) {
-			System.out.println(Y_inK[k]);
-		}
+		checkResult();
+
 	}
 	
 	public void startTraining() throws IOException {
+		System.out.println("Iniciado Treinamento");
 		openFile();
 		fillDataTarget();
 		startNeuralNetwork();	
@@ -50,9 +48,12 @@ public class Core implements Constants {
 		fillRandomlyWeights();	//step 1
 		
 		int currentSeason = 1;	
-		for(int i = 1; i<=allFiles.size(); i++) {
-			readAllFiles(i-1);	//Read all Text to Training each one
+		for(int i = 0; i<allFiles.size(); i++) {
+			readAllFiles(i);	//Read all Text to Training each one
 			
+			if(i%3 == 0) 			//Each 3 files change the target
+				currentTarget++;
+					
 			while(currentSeason != NUMBER_OF_SEASONS) { //step 2
 			
 				summationWeights();		//step 3, 4 and 5
@@ -60,12 +61,13 @@ public class Core implements Constants {
 				adjustWeights();		//step 7, 8, 9 
 				currentSeason++;
 			}
-			
-			if(i%3 == 0)			//Each 3 files change the target
-				currentTarget++;
+	
+			for(int k=0; k<NUMBER_OF_EXITS; k++) {
+				System.out.println(sigmoid(Y_inK[k]));
+			}	
 			currentSeason = 1;
 		}
-		currentTarget = 0;
+		currentTarget = -1;
 	}
 	
 	private void openFile() {
@@ -82,7 +84,9 @@ public class Core implements Constants {
 	
 	private void readOneFile() throws IOException	{
 		
+		
 		File file = new File(System.getProperty("user.dir").concat(PATH_FILE).concat("/"+TEST_FILE_NAME));
+		System.out.println("Processando o arquivo: "+file.getName());
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		
 		try {
@@ -94,6 +98,7 @@ public class Core implements Constants {
 		        line = reader.readLine();
 		    }
 			
+			System.out.println(sb.toString());
 		    char[] letters = sb.toString().toCharArray();
 		    fillEntries(letters);
 		    
@@ -103,8 +108,10 @@ public class Core implements Constants {
 			reader.close();
 		}
 	}
+	
 	private void readAllFiles(int index) throws IOException	{
 		
+		System.out.println("Processando o arquivo: "+allFiles.get(index).getName());
 		BufferedReader reader = new BufferedReader(new FileReader(allFiles.get(index)));
 		
 		try {
@@ -130,9 +137,9 @@ public class Core implements Constants {
 		for(int i=0; i<NUMBER_OF_EXITS; i++) {
 			for(int j=0; j<NUMBER_OF_EXITS; j++) {
 				if(i == j)
-					target[i][j] = 1;
+					target[i][j] = ONE_POSITIVE;
 				else
-					target[i][j] = 0;
+					target[i][j] = ONE_NEGATIVE;
 			}
 		}
 	}
@@ -149,8 +156,9 @@ public class Core implements Constants {
 			index++;
 		}
 	}
-	
+
 	private void fillRandomlyWeights() {
+		
 		//Weight V
 		for(int i=0; i<NUMBER_OF_ENTRIES-1; i++) {
 			for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES-1; j++) {
@@ -192,26 +200,58 @@ public class Core implements Constants {
 	}
 	
 	private void issuesCalculate() {
+		
 		for(int k=0; k<NUMBER_OF_EXITS; k++) {
-			correctionFactorJ[k] = (target[currentTarget][k] - sigmoid(Y_inK[k])) * ((sigmoid(Y_inK[k])) * (1 - sigmoid(Y_inK[k]))); 
+			correctionFactorK[k] = (target[currentTarget][k] - sigmoid(Y_inK[k])) * (sigmoid(Y_inK[k])) * (1 - sigmoid(Y_inK[k])); 
 		}
 		
 		for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {		
 			for(int k=0; k<NUMBER_OF_EXITS; k++) {
-				correctionFactorK[j] += correctionFactorJ[k]*weightsW[j][k];
+				correctionFactorJ[j] += correctionFactorK[k]*weightsW[j][k];
 			}
 		}
 	}
 	
 	private void adjustWeights() {
+		
 		for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {
 			for(int k=0; k<NUMBER_OF_EXITS; k++) {
-				weightsW[j][k] = LEARNING_RATE * correctionFactorJ[k] * sigmoid(Z_inJ[j]);
+				weightsW[j][k] = LEARNING_RATE * correctionFactorK[k] * sigmoid(Z_inJ[j]);
 			}
 		}
+
 		for(int i=0; i<NUMBER_OF_ENTRIES; i++) {
 			for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {
-				weightsV[i][j] = LEARNING_RATE * correctionFactorK[j] * entries[i];
+				weightsV[i][j] = LEARNING_RATE * correctionFactorJ[j];
+			}
+		}
+	}
+	
+	private void checkResult() {	
+				
+		int exit[] = new int[NUMBER_OF_EXITS];
+		
+		for(int i=0; i<NUMBER_OF_EXITS; i++) {
+			exit[i] = (int) Math.round(sigmoid(Y_inK[i]));
+			System.out.println(sigmoid(Y_inK[i]));
+		}	
+
+		for(int i=0; i<NUMBER_OF_EXITS; i++) {
+			if(exit[i] == 1) {
+				if(i == 0) 
+					System.out.println("LETRA ENCONTRADA: A");
+				if(i == 1) 
+					System.out.println("LETRA ENCONTRADA: B");
+				if(i == 2) 
+					System.out.println("LETRA ENCONTRADA: C");
+				if(i == 3) 
+					System.out.println("LETRA ENCONTRADA: D");
+				if(i == 4) 
+					System.out.println("LETRA ENCONTRADA: E");
+				if(i == 5) 
+					System.out.println("LETRA ENCONTRADA: J");
+				if(i == 6) 
+					System.out.println("LETRA ENCONTRADA: K");
 			}
 		}
 	}
