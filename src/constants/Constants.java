@@ -14,8 +14,8 @@ public interface Constants {
 	final int LAYER_k = 7;	// CAMADA 3 
 	
 	// VARIAVEIS ADPTAVEIS
-	final double LEARNING_RATE = 0.2;	// TAXA DE APRENDIZADO 
-	final int NUMBER_OF_EPOCH = 100;	// EPÓCAS
+	final double LEARNING_RATE = 0.5;	// TAXA DE APRENDIZADO 
+	final int NUMBER_OF_EPOCH = 20;	// EPÓCAS
 	
 	final String PATH_FILE = "/letters";
 	final String TEST_FILE_NAME = "TESTE.txt";

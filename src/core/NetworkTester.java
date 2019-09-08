@@ -7,7 +7,8 @@ import utils.FileManager;
 public class NetworkTester extends Shared {
 	
 	public void startTest() throws IOException {
-		System.out.println("Iniciado teste do arquivo");
+		System.out.println("----------------------------");
+		System.out.println(">>Iniciado teste do arquivo");
 		fillInputs(FileManager.getCharsFromTestFile());
 		calculateInput();
 		checkResult();

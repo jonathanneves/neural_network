@@ -17,21 +17,27 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 		
+		NetworkTrainer networkTrainer = new NetworkTrainer();
+		NetworkTester networkTester = new NetworkTester();
+		
 		int choice = 0;
-		while(choice != 3) {
-			choice = Integer.parseInt(JOptionPane.showInputDialog("Escolha uma opção: \n 1 - Treinar a Rede Neural (Recomendado) \n 2 - Testar um arquivo \n 3 - Encerrar o programa"));
+			choice = Integer.parseInt(JOptionPane.showInputDialog("Escolha uma opção: \n 1 - Treinar a Rede Neural \n 2 - Encerrar o programa"));
 			switch (choice) {
 			case 1:
-				NetworkTrainer networkTrainer = new NetworkTrainer();
 				networkTrainer.startTraining();
-				break;
+				while(true) {
+					choice = Integer.parseInt(JOptionPane.showInputDialog("Escolha uma opção: \n 1 - Testar Arquivo na Rede Neural \n 2 - Encerrar o programa"));
+					switch(choice) {
+						case 1:
+							networkTester.startTest();	
+							break;
+						case 2: 
+							System.exit(0);
+					}
+				}
 			case 2:
-				NetworkTester networkTester = new NetworkTester();
-				networkTester.startTest();
-				break;
-			case 3:
-				System.exit(0);
+				System.exit(0);;
+
 			}
-		}
 	}
 }

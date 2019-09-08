@@ -1,12 +1,14 @@
 package core;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import constants.Constants;
 
 public class Shared implements Constants {
 	
 	public int inputs[] = new int[LAYER_i];
 	
-	public double Z_inJ[] = new double[LAYER_j];
+	//public double Z_inJ[] = new double[LAYER_j];
 	public double Y_inK[] = new double[LAYER_k];
 	
 	public double weightsV[][] = new double[LAYER_i][LAYER_j];
@@ -21,14 +23,15 @@ public class Shared implements Constants {
 			for(int i = 0; i < LAYER_i; i++) {
 				sum += inputs[i] * weightsV[i][j];
 			}
-			Z_inJ[j] = sum;
+			//Z_inJ[j] = sum;
 			Z[j] = sigmoid(sum);
 			sum = 0;
 		}
 		
 		for(int k = 0; k < LAYER_k; k++) {
 			for(int j = 0; j < LAYER_j; j++) {
-				sum += sigmoid(Z_inJ[j]) * weightsW[j][k];
+				sum += Z[j] * weightsW[j][k];
+				//sum += sigmoid(Z_inJ[j]) * weightsW[j][k];
 			}
 			Y_inK[k] = sum;
 			Y[k] = sigmoid(sum);
@@ -53,5 +56,4 @@ public class Shared implements Constants {
 			index++;
 		}
 	}
-	
 }

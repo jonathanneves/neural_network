@@ -18,7 +18,7 @@ public class NetworkTrainer extends Shared {
 	private static int currentTarget = ONE_NEGATIVE;
 	
 	public void startTraining() throws IOException {
-		System.out.println("Iniciado Treinamento");
+		System.out.println(">>Iniciado Treinamento");
 		fileList = FileManager.getAllFiles();
 		fillTargetData();
 		setRandomWeights();	// Step 1
@@ -48,7 +48,7 @@ public class NetworkTrainer extends Shared {
 			}
 		}
 	}
-
+	
 	private void setRandomWeights() {
 		
 		//Weight V
@@ -59,12 +59,13 @@ public class NetworkTrainer extends Shared {
 		}
 		
 		//Weight W
-		for(int i = 0; i < LAYER_j - 1; i++) {
-			for(int j = 0; j < LAYER_k - 1; j++) {
-				weightsW[i][j] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
+		for(int j = 0; j < LAYER_j - 1; j++) {
+			for(int k = 0; k < LAYER_k - 1; k++) {
+				weightsW[j][k] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
 			}
 		}
 	}
+
 	
 	private void calculateError() {
 		for(int k = 0; k < LAYER_k; k++) {
@@ -85,9 +86,10 @@ public class NetworkTrainer extends Shared {
 		}
 		for(int i = 0; i < LAYER_i; i++) {
 			for(int j = 0; j < LAYER_j; j++) {
-				weightsV[i][j] = LEARNING_RATE * correctionFactorJ[j];
+				weightsV[i][j] = LEARNING_RATE * correctionFactorJ[j] * inputs[j];
 			}
 		}
 	}
+	
 	
 }
