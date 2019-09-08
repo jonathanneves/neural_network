@@ -12,25 +12,29 @@ import constants.Constants;
 
 public class Core implements Constants {
 
-	private int entries[] = new int[NUMBER_OF_ENTRIES];
-	private int target[][] = new int[NUMBER_OF_EXITS][NUMBER_OF_EXITS];
+	private int entries[] = new int[LAYER_i];
+	private int target[][] = new int[LAYER_k][LAYER_k];
 	
-	private double weightsV[][] = new double[NUMBER_OF_ENTRIES][NUMBER_OF_INTERMEDITE_ENTRIES];
-	private double weightsW[][] = new double[NUMBER_OF_INTERMEDITE_ENTRIES][NUMBER_OF_EXITS];
+	private double weightsV[][] = new double[LAYER_i][LAYER_j];
+	private double weightsW[][] = new double[LAYER_j][LAYER_k];
 	
-	private double Z_inJ[] = new double[NUMBER_OF_INTERMEDITE_ENTRIES];
-	private double Y_inK[] = new double[NUMBER_OF_EXITS];
+	private double Z_inJ[] = new double[LAYER_j];
+	private double Y_inK[] = new double[LAYER_k];
 	
-	private double correctionFactorJ[] = new double[NUMBER_OF_INTERMEDITE_ENTRIES];
-	private double correctionFactorK[] = new double[NUMBER_OF_EXITS];
+	private double Z[] = new double[LAYER_j]; //SIGMOIDE CALCULADO
+	private double Y[] = new double[LAYER_k];	//SIGMOIDE CALCULADO
+	
+	private double correctionFactorJ[] = new double[LAYER_j];
+	private double correctionFactorK[] = new double[LAYER_k];
 	
 	private List<File> allFiles = new ArrayList<File>();
 	private static int currentTarget = -1;
 	
+	
 	public void testNeuralNetwork()  throws IOException {
 		System.out.println("Iniciado Teste do Arquivo");
-		readOneFile();		
-	
+		
+		readOneFile();	
 		summationWeights();
 		checkResult();
 
@@ -40,34 +44,30 @@ public class Core implements Constants {
 		System.out.println("Iniciado Treinamento");
 		openFile();
 		fillDataTarget();
-		startNeuralNetwork();	
+		fillRandomlyWeights();	//step 1
+		
+		for(int i = 0; i<allFiles.size(); i++) {
+			
+			readFileByIndex(i);	//Read all Text to Training each one
+					
+			if(i%3 == 0) 			//Each 3 files change the target
+				currentTarget++;
+			
+			startNeuralNetwork();	
+		}
+		currentTarget = -1;
 	}
 	
 	public void startNeuralNetwork() throws IOException  {
-		
-		fillRandomlyWeights();	//step 1
-		
+				
 		int currentSeason = 1;	
-		for(int i = 0; i<allFiles.size(); i++) {
-			readAllFiles(i);	//Read all Text to Training each one
-			
-			if(i%3 == 0) 			//Each 3 files change the target
-				currentTarget++;
 					
-			while(currentSeason != NUMBER_OF_SEASONS) { //step 2
-			
-				summationWeights();		//step 3, 4 and 5
-				issuesCalculate();		//step 6
-				adjustWeights();		//step 7, 8, 9 
-				currentSeason++;
-			}
-	
-			for(int k=0; k<NUMBER_OF_EXITS; k++) {
-				System.out.println(sigmoid(Y_inK[k]));
-			}	
-			currentSeason = 1;
-		}
-		currentTarget = -1;
+		while(currentSeason != NUMBER_OF_SEASONS) { //step 2		
+			summationWeights();		//step 3, 4 and 5
+			issuesCalculate();		//step 6
+			adjustWeights();		//step 7, 8, 9 
+			currentSeason++;
+		}	
 	}
 	
 	private void openFile() {
@@ -82,8 +82,7 @@ public class Core implements Constants {
 		}
 	}
 	
-	private void readOneFile() throws IOException	{
-		
+	private void readOneFile() throws IOException	{	
 		
 		File file = new File(System.getProperty("user.dir").concat(PATH_FILE).concat("/"+TEST_FILE_NAME));
 		System.out.println("Processando o arquivo: "+file.getName());
@@ -109,7 +108,7 @@ public class Core implements Constants {
 		}
 	}
 	
-	private void readAllFiles(int index) throws IOException	{
+	private void readFileByIndex(int index) throws IOException	{
 		
 		System.out.println("Processando o arquivo: "+allFiles.get(index).getName());
 		BufferedReader reader = new BufferedReader(new FileReader(allFiles.get(index)));
@@ -134,8 +133,8 @@ public class Core implements Constants {
 	}
 	
 	private void fillDataTarget() {
-		for(int i=0; i<NUMBER_OF_EXITS; i++) {
-			for(int j=0; j<NUMBER_OF_EXITS; j++) {
+		for(int i=0; i<LAYER_k; i++) {
+			for(int j=0; j<LAYER_k; j++) {
 				if(i == j)
 					target[i][j] = ONE_POSITIVE;
 				else
@@ -160,15 +159,15 @@ public class Core implements Constants {
 	private void fillRandomlyWeights() {
 		
 		//Weight V
-		for(int i=0; i<NUMBER_OF_ENTRIES-1; i++) {
-			for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES-1; j++) {
+		for(int i=0; i<LAYER_i-1; i++) {
+			for(int j=0; j<LAYER_j-1; j++) {
 				weightsV[i][j] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
 			}
 		}
 		
 		//Weight W
-		for(int i=0; i<NUMBER_OF_INTERMEDITE_ENTRIES-1; i++) {
-			for(int j=0; j<NUMBER_OF_EXITS-1; j++) {
+		for(int i=0; i<LAYER_j-1; i++) {
+			for(int j=0; j<LAYER_k-1; j++) {
 				weightsW[i][j] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
 			}
 		}
@@ -178,35 +177,37 @@ public class Core implements Constants {
 		
 		double sum = 0;
 		
-		for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {
-			for(int i=0; i<NUMBER_OF_ENTRIES; i++) {
+		for(int j=0; j<LAYER_j; j++) {
+			for(int i=0; i<LAYER_i; i++) {
 				sum += entries[i]*weightsV[i][j];
 			}
 			Z_inJ[j] = sum;
+			Z[j] = sigmoid(sum);
 			sum = 0;
 		}
 		
-		for(int k=0; k<NUMBER_OF_EXITS; k++) {
-			for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {
+		for(int k=0; k<LAYER_k; k++) {
+			for(int j=0; j<LAYER_j; j++) {
 				sum += sigmoid(Z_inJ[j])*weightsW[j][k];
 			}
 			Y_inK[k] = sum;
+			Y[k] = sigmoid(sum);
 			sum = 0;
 		}
 	}
 	
 	private double sigmoid(double x) {
-		return  1 / (1+(Math.pow(Math.E, -x)));
+		return  1 / (1+(Math.pow(Math.E, 0-x)));
 	}
 	
 	private void issuesCalculate() {
 		
-		for(int k=0; k<NUMBER_OF_EXITS; k++) {
-			correctionFactorK[k] = (target[currentTarget][k] - sigmoid(Y_inK[k])) * (sigmoid(Y_inK[k])) * (1 - sigmoid(Y_inK[k])); 
+		for(int k=0; k<LAYER_k; k++) {
+			correctionFactorK[k] = (target[currentTarget][k] - Y[k]) * (Y[k] * (1 - Y[k])); 
 		}
 		
-		for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {		
-			for(int k=0; k<NUMBER_OF_EXITS; k++) {
+		for(int j=0; j<LAYER_j; j++) {		
+			for(int k=0; k<LAYER_k; k++) {
 				correctionFactorJ[j] += correctionFactorK[k]*weightsW[j][k];
 			}
 		}
@@ -214,14 +215,14 @@ public class Core implements Constants {
 	
 	private void adjustWeights() {
 		
-		for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {
-			for(int k=0; k<NUMBER_OF_EXITS; k++) {
-				weightsW[j][k] = LEARNING_RATE * correctionFactorK[k] * sigmoid(Z_inJ[j]);
+		for(int j=0; j<LAYER_j; j++) {
+			for(int k=0; k<LAYER_k; k++) {
+				weightsW[j][k] = LEARNING_RATE * correctionFactorK[k] * Z[j];
 			}
 		}
 
-		for(int i=0; i<NUMBER_OF_ENTRIES; i++) {
-			for(int j=0; j<NUMBER_OF_INTERMEDITE_ENTRIES; j++) {
+		for(int i=0; i<LAYER_i; i++) {
+			for(int j=0; j<LAYER_j; j++) {
 				weightsV[i][j] = LEARNING_RATE * correctionFactorJ[j];
 			}
 		}
@@ -229,14 +230,14 @@ public class Core implements Constants {
 	
 	private void checkResult() {	
 				
-		int exit[] = new int[NUMBER_OF_EXITS];
+		int exit[] = new int[LAYER_k];
 		
-		for(int i=0; i<NUMBER_OF_EXITS; i++) {
-			exit[i] = (int) Math.round(sigmoid(Y_inK[i]));
-			System.out.println(sigmoid(Y_inK[i]));
+		for(int k=0; k<LAYER_k; k++) {
+			exit[k]  = (int) Math.round(Y[k]);
+			System.out.println(Y[k]);
 		}	
 
-		for(int i=0; i<NUMBER_OF_EXITS; i++) {
+		for(int i=0; i<LAYER_k; i++) {
 			if(exit[i] == 1) {
 				if(i == 0) 
 					System.out.println("LETRA ENCONTRADA: A");

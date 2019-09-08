@@ -5,7 +5,13 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 public class Main {	
-		
+	/**
+	 * 	
+	 * @autor Jonathan Neves
+	 * @instrucao Para realizar o treinamento é necessário mudar os valores das entradas e saídas da Classe Constants
+	 * em seguida criar arquivos txt na pasta Letters com os símbolos de entrada conforme deseja.
+	 * OBS.: É necessário ter o mesmo número de símbolos conforme varíavel NUMBER_OF_ENTRIES
+	 */
 	public static void main(String[] args) throws IOException {
 		
 		Core core = new Core();
