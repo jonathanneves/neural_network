@@ -15,7 +15,7 @@ public interface Constants {
 	
 	//VARIAVEIS ADPTAVEIS
 	final double LEARNING_RATE = 0.2;	//TAXA DE APRENDIZADO 
-	final int NUMBER_OF_SEASONS = 100;	//EPÓCAS
+	final int NUMBER_OF_SEASONS = 1000;	//EPÓCAS
 	
 	final String PATH_FILE = "/letters";
 	final String TEST_FILE_NAME = "TESTE.txt";

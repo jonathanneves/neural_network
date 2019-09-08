@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,14 +13,14 @@ import constants.Constants;
 
 public class Core implements Constants {
 
-	private int entries[] = new int[LAYER_i];
+	private int inputs[] = new int[LAYER_i];
 	private int target[][] = new int[LAYER_k][LAYER_k];
 	
 	private double weightsV[][] = new double[LAYER_i][LAYER_j];
 	private double weightsW[][] = new double[LAYER_j][LAYER_k];
 	
-	private double Z_inJ[] = new double[LAYER_j];
-	private double Y_inK[] = new double[LAYER_k];
+	//private double Z_inJ[] = new double[LAYER_j];
+	//private double Y_inK[] = new double[LAYER_k];
 	
 	private double Z[] = new double[LAYER_j]; //SIGMOIDE CALCULADO
 	private double Y[] = new double[LAYER_k];	//SIGMOIDE CALCULADO
@@ -60,14 +61,19 @@ public class Core implements Constants {
 	
 	public void startNeuralNetwork() throws IOException  {
 				
-		int currentSeason = 1;	
+		int currentSeason = 0;	
 					
 		while(currentSeason != NUMBER_OF_SEASONS) { //step 2		
 			summationWeights();		//step 3, 4 and 5
 			issuesCalculate();		//step 6
 			adjustWeights();		//step 7, 8, 9 
 			currentSeason++;
+		}			
+		
+		for(int k=0; k<LAYER_k; k++) {
+			System.out.println(Y[k]);
 		}	
+
 	}
 	
 	private void openFile() {
@@ -138,8 +144,8 @@ public class Core implements Constants {
 				if(i == j)
 					target[i][j] = ONE_POSITIVE;
 				else
-					target[i][j] = ONE_NEGATIVE;
-			}
+					target[i][j] = ZERO;
+			}			
 		}
 	}
 	
@@ -147,11 +153,11 @@ public class Core implements Constants {
 		int index = 0;
 		for(char c : letters) {
 			if(c == HASHTAG)
-				entries[index] = ONE_POSITIVE;
+				inputs[index] = ONE_POSITIVE;
 			else if(c == DOT)
-				entries[index] = ONE_NEGATIVE;
+				inputs[index] = ONE_NEGATIVE;
 			else
-				entries[index] = ZERO;
+				inputs[index] = ZERO;
 			index++;
 		}
 	}
@@ -179,18 +185,16 @@ public class Core implements Constants {
 		
 		for(int j=0; j<LAYER_j; j++) {
 			for(int i=0; i<LAYER_i; i++) {
-				sum += entries[i]*weightsV[i][j];
+				sum += inputs[i]*weightsV[i][j];
 			}
-			Z_inJ[j] = sum;
 			Z[j] = sigmoid(sum);
 			sum = 0;
 		}
 		
 		for(int k=0; k<LAYER_k; k++) {
 			for(int j=0; j<LAYER_j; j++) {
-				sum += sigmoid(Z_inJ[j])*weightsW[j][k];
+				sum += Z[j]*weightsW[j][k];
 			}
-			Y_inK[k] = sum;
 			Y[k] = sigmoid(sum);
 			sum = 0;
 		}
@@ -203,7 +207,7 @@ public class Core implements Constants {
 	private void issuesCalculate() {
 		
 		for(int k=0; k<LAYER_k; k++) {
-			correctionFactorK[k] = (target[currentTarget][k] - Y[k]) * (Y[k] * (1 - Y[k])); 
+			correctionFactorK[k] = (target[currentTarget][k] - Y[k]) * (Y[k]) * (1 - Y[k]); 
 		}
 		
 		for(int j=0; j<LAYER_j; j++) {		
@@ -223,7 +227,7 @@ public class Core implements Constants {
 
 		for(int i=0; i<LAYER_i; i++) {
 			for(int j=0; j<LAYER_j; j++) {
-				weightsV[i][j] = LEARNING_RATE * correctionFactorJ[j];
+				weightsV[i][j] = LEARNING_RATE * correctionFactorJ[j] * inputs[i];
 			}
 		}
 	}
@@ -236,6 +240,8 @@ public class Core implements Constants {
 			exit[k]  = (int) Math.round(Y[k]);
 			System.out.println(Y[k]);
 		}	
+		
+		System.out.print("Saída: "+Arrays.toString(exit));
 
 		for(int i=0; i<LAYER_k; i++) {
 			if(exit[i] == 1) {
