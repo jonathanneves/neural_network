@@ -18,7 +18,6 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		NetworkTrainer networkTrainer = new NetworkTrainer();
-		NetworkTester networkTester = new NetworkTester();
 		
 		int choice = 0;
 			choice = Integer.parseInt(JOptionPane.showInputDialog("Escolha uma opção: \n 1 - Treinar a Rede Neural \n 2 - Encerrar o programa"));
@@ -29,6 +28,7 @@ public class Main {
 					choice = Integer.parseInt(JOptionPane.showInputDialog("Escolha uma opção: \n 1 - Testar Arquivo na Rede Neural \n 2 - Encerrar o programa"));
 					switch(choice) {
 						case 1:
+							NetworkTester networkTester = new NetworkTester();
 							networkTester.startTest();	
 							break;
 						case 2: 

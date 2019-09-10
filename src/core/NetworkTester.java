@@ -1,6 +1,7 @@
 package core;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import utils.FileManager;
 
@@ -11,15 +12,30 @@ public class NetworkTester extends Shared {
 		System.out.println(">>Iniciado teste do arquivo");
 		fillInputs(FileManager.getCharsFromTestFile());
 		calculateInput();
+		
 		checkResult();
 	}
 	
-	private void checkResult() {	
+	private void checkResult() {
+		
+		double lesser = 999999999;
 		int output[] = new int[LAYER_k];
+		
 		for(int k = 0; k < LAYER_k; k++) {
-			output[k] = (int) Math.round(Y[k]);
 			System.out.println(Y[k]);
+			if(Y[k] < lesser) 
+				lesser = Y[k];
 		}	
+		
+		for(int k = 0; k < LAYER_k; k++) {
+			if(lesser == Y[k]) 
+				output[k] = ONE_POSITIVE;
+			else 
+				output[k] = ZERO;
+		}	
+		
+		System.out.println("Saída: "+Arrays.toString(output));
+
 		for(int i = 0; i < LAYER_k; i++) {
 			if(output[i] == 1) {
 				if(i == 0) 
