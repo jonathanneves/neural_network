@@ -25,9 +25,8 @@ public class NetworkTester extends Shared {
 		double lesser = 999999999;
 		String result = "LETRA ENCONTRADA: ";
 		int output[] = new int[LAYER_k];
-		
 		for(int k = 0; k < LAYER_k; k++) {
-			System.out.println(format.format(Y[k]));
+			System.out.println(Y[k]);
 			if(Y[k] < lesser) 
 				lesser = Y[k];
 		}	

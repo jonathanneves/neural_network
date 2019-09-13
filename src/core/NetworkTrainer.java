@@ -9,7 +9,7 @@ import utils.FileManager;
 
 public class NetworkTrainer extends Shared {
 
-	private int target[] = new int[LAYER_k];
+	private int target[];
 	
 	private double correctionFactorJ[] = new double[LAYER_j];
 	private double correctionFactorK[] = new double[LAYER_k];
@@ -19,8 +19,8 @@ public class NetworkTrainer extends Shared {
 	public void startTraining() throws IOException {
 		System.out.println(">>Iniciado Treinamento");
 		fileList = FileManager.getAllFiles();
-
-		setAllLayers();
+		setAllLayers(fileList.get(0));
+		resizeArrays();
 		setRandomWeights();	
 		
 		for(int i = 0; i <fileList.size(); i++) {
@@ -30,7 +30,6 @@ public class NetworkTrainer extends Shared {
 		}
 	}
 	
-
 	private void startNeuralNetwork() throws IOException {
 		int currentSeason = ZERO;	
 		while(currentSeason != NUMBER_OF_EPOCH) { // Step 2		
@@ -52,28 +51,29 @@ public class NetworkTrainer extends Shared {
 		}
 	}
 	
-	private static void setAllLayers() throws IOException {
-		LAYER_i = FileManager.getCharsFromIndex(fileList.get(0)).length;
-		LAYER_k = FileManager.getOutputFromIndex(fileList.get(0)).length;	
-	}
-	
 	private void setRandomWeights() {
 		
 		//Weight V
-		for(int i = 0; i < LAYER_i - 1; i++) {
-			for(int j=0; j < LAYER_j - 1; j++) {
+		for(int i = 0; i < LAYER_i; i++) {
+			for(int j=0; j < LAYER_j; j++) {
 				weightsV[i][j] = ThreadLocalRandom.current().nextDouble(ZERO, ONE_POSITIVE);
 				biasV[i][j] = ZERO;
 			}
 		}
 		
 		//Weight W
-		for(int j = 0; j < LAYER_j - 1; j++) {
-			for(int k = 0; k < LAYER_k - 1; k++) {
+		for(int j = 0; j < LAYER_j; j++) {
+			for(int k = 0; k < LAYER_k; k++) {
 				weightsW[j][k] = ThreadLocalRandom.current().nextDouble(ZERO, ONE_POSITIVE);
 				biasW[j][k] = ZERO;
 			}
 		}
+	}
+	
+	private void resizeArrays() {
+		target = new int[LAYER_k];
+		correctionFactorJ = new double[LAYER_j];
+		correctionFactorK = new double[LAYER_k];
 	}
 	
 	private void calculateError() {
