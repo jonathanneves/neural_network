@@ -9,13 +9,9 @@ public interface Constants {
 	char HASHTAG = '#';
 	char DOT = '.'; 
 	
-	final int LAYER_i = 63;	// CAMADA 1 
-	final int LAYER_j = 30;	// CAMADA 2 - (ADAPTAVEL)
-	final int LAYER_k = 7;	// CAMADA 3 
-	
 	// VARIAVEIS ADPTAVEIS
 	final double LEARNING_RATE = 0.2;	// TAXA DE APRENDIZADO 
-	final int NUMBER_OF_EPOCH = 20;	// EPÓCAS
+	final int NUMBER_OF_EPOCH = 500;	// EPÓCAS
 	
 	final String PATH_FILE = "/letters";
 	final String TEST_FILE_NAME = "TESTE.txt";

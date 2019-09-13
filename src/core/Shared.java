@@ -1,8 +1,8 @@
 package core;
-
 import constants.Constants;
+import model.Layer;
 
-public class Shared implements Constants {
+public class Shared extends Layer implements Constants {
 	
 	public static int inputs[] = new int[LAYER_i];
 	

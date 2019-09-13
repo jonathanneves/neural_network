@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import constants.Constants;
+import exceptions.InvalidFileException;
+import model.Layer;
 
-public class FileManager implements Constants {
+public class FileManager extends Layer implements Constants {
 
 	public static char[] getCharsFromTestFile() throws IOException {
 
@@ -36,17 +38,33 @@ public class FileManager implements Constants {
 		}
 	}
 	
-	public static char[] getCharsFromIndex(int index, List<File> fileList) throws IOException {
-		System.out.println("Processando o arquivo: " + fileList.get(index).getName());
-		BufferedReader reader = new BufferedReader(new FileReader(fileList.get(index)));
+	public static char[] getCharsFromIndex(File file) throws IOException {
+		System.out.println("Processando o arquivo: " + file.getName());
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader2 = new BufferedReader(new FileReader(file));
+		boolean firstTime = true;
+		
 		try {
 			StringBuilder sb = new StringBuilder();
 			String line = reader.readLine();
-			while (line != null) {
+			int lines = 0;
+			
+			while(reader.readLine() != null) lines++;
+			reader.close();
+			
+			for(int i = lines; i>0; i--) {
 				sb.append(line);
-		        line = reader.readLine();
+		        line = reader2.readLine();	
 		    }
-		    return sb.toString().toCharArray();
+			reader2.close();
+			
+			if(!firstTime) {
+				if(sb.toString().length() != LAYER_i)
+					throw new InvalidFileException("Invalid number of characters");
+			}
+			firstTime = false;
+			
+			return sb.toString().toCharArray();
 		} catch(IOException e) {
 			e.getMessage();
 			return null;
@@ -55,6 +73,31 @@ public class FileManager implements Constants {
 		}
 	}
 
+	public static char[] getOutputFromIndex(File file) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		boolean firstTime = true;
+		
+		try {
+			String last = "", line = "";
+			
+			while ((line = reader.readLine()) != null) {
+				last = line;
+		    }
+			if(!firstTime) {
+				if(last.length() != LAYER_k)
+					throw new InvalidFileException("Invalid number of characters");
+			}
+			firstTime = false;
+			
+			
+		    return last.toString().toCharArray();
+		} catch(IOException e) {
+			e.getMessage();
+			return null;
+		} finally {
+			reader.close();
+		}
+	}
 	public static List<File> getAllFiles() {
 		File file = new File(System.getProperty("user.dir").concat(PATH_FILE));
 		List<File> fileList = new ArrayList<>();

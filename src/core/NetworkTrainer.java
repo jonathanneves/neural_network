@@ -9,27 +9,25 @@ import utils.FileManager;
 
 public class NetworkTrainer extends Shared {
 
-	private int target[][] = new int[LAYER_k][LAYER_k];
+	private int target[] = new int[LAYER_k];
 	
 	private double correctionFactorJ[] = new double[LAYER_j];
 	private double correctionFactorK[] = new double[LAYER_k];
 	
-	private List<File> fileList;
-	private static int currentTarget = ONE_NEGATIVE;
+	private static List<File> fileList;
 	
 	public void startTraining() throws IOException {
 		System.out.println(">>Iniciado Treinamento");
 		fileList = FileManager.getAllFiles();
-		fillTargetData();
+
+		setAllLayers();
 		setRandomWeights();	
 		
 		for(int i = 0; i <fileList.size(); i++) {
-			fillInputs(FileManager.getCharsFromIndex(i, fileList)); // Read all Text to Training each one
-			if(i % 3 == 0) 
-				currentTarget++; // Each 3 files change the target
+			fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
+			setTargetData(i);	
 			startNeuralNetwork();	
 		}
-		currentTarget = ONE_NEGATIVE;
 	}
 	
 
@@ -44,12 +42,19 @@ public class NetworkTrainer extends Shared {
 		}	
 	}
 	
-	private void fillTargetData() {
-		for(int i = 0; i < LAYER_k; i++) {
-			for(int j = 0; j < LAYER_k; j++) {
-				target[i][j] = i == j ? ONE_POSITIVE : ONE_NEGATIVE;
-			}
+	private void setTargetData(int index) throws IOException {
+		char[] outputs = FileManager.getOutputFromIndex(fileList.get(index));
+		for(int i=0; i<outputs.length; i++) {
+			if(outputs[i] == DOT)
+				target[i] = ZERO;
+			else
+				target[i] = ONE_POSITIVE;
 		}
+	}
+	
+	private static void setAllLayers() throws IOException {
+		LAYER_i = FileManager.getCharsFromIndex(fileList.get(0)).length;
+		LAYER_k = FileManager.getOutputFromIndex(fileList.get(0)).length;	
 	}
 	
 	private void setRandomWeights() {
@@ -57,7 +62,7 @@ public class NetworkTrainer extends Shared {
 		//Weight V
 		for(int i = 0; i < LAYER_i - 1; i++) {
 			for(int j=0; j < LAYER_j - 1; j++) {
-				weightsV[i][j] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
+				weightsV[i][j] = ThreadLocalRandom.current().nextDouble(ZERO, ONE_POSITIVE);
 				biasV[i][j] = ZERO;
 			}
 		}
@@ -65,16 +70,17 @@ public class NetworkTrainer extends Shared {
 		//Weight W
 		for(int j = 0; j < LAYER_j - 1; j++) {
 			for(int k = 0; k < LAYER_k - 1; k++) {
-				weightsW[j][k] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
+				weightsW[j][k] = ThreadLocalRandom.current().nextDouble(ZERO, ONE_POSITIVE);
 				biasW[j][k] = ZERO;
 			}
 		}
 	}
-
+	
 	private void calculateError() {
 		for(int k = 0; k < LAYER_k; k++) {
-			correctionFactorK[k] = (target[currentTarget][k] - Y[k]) * (Y[k] * (1 - Y[k]));  
+			correctionFactorK[k] = (target[k] - Y[k]) * (Y[k] * (1 - Y[k]));  
 		}
+		
 		for(int j = 0; j < LAYER_j; j++) {		
 			for(int k = 0; k < LAYER_k; k++) {
 				correctionFactorJ[j] += correctionFactorK[k] * weightsW[j][k];
