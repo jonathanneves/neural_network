@@ -42,7 +42,6 @@ public class FileManager extends Layer implements Constants {
 		System.out.println("Processando o arquivo: " + file.getName());
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		BufferedReader reader2 = new BufferedReader(new FileReader(file));
-		boolean firstTime = true;
 		
 		try {
 			StringBuilder sb = new StringBuilder();
@@ -50,32 +49,27 @@ public class FileManager extends Layer implements Constants {
 			int lines = 0;
 			
 			while(reader.readLine() != null) lines++;
-			reader.close();
-			
+
 			for(int i = lines; i>0; i--) {
 				sb.append(line);
 		        line = reader2.readLine();	
 		    }
-			reader2.close();
 			
-			if(!firstTime) {
-				if(sb.toString().length() != LAYER_i)
-					throw new InvalidFileException("Invalid number of characters");
-			}
-			firstTime = false;
+			if(sb.toString().length() != LAYER_i)
+				throw new InvalidFileException("Invalid number of characters");
 			
 			return sb.toString().toCharArray();
 		} catch(IOException e) {
 			e.getMessage();
 			return null;
 		} finally {
-			reader.close();
+			reader.close();		
+			reader2.close();
 		}
 	}
 
 	public static char[] getOutputFromIndex(File file) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
-		boolean firstTime = true;
 		
 		try {
 			String last = "", line = "";
@@ -83,14 +77,12 @@ public class FileManager extends Layer implements Constants {
 			while ((line = reader.readLine()) != null) {
 				last = line;
 		    }
-			if(!firstTime) {
-				if(last.length() != LAYER_k)
-					throw new InvalidFileException("Invalid number of characters");
-			}
-			firstTime = false;
-			
-			
+
+			if(last.length() != LAYER_k)
+				throw new InvalidFileException("Invalid number of characters");		
+
 		    return last.toString().toCharArray();
+		    
 		} catch(IOException e) {
 			e.getMessage();
 			return null;
@@ -98,6 +90,40 @@ public class FileManager extends Layer implements Constants {
 			reader.close();
 		}
 	}
+	
+	public static void setLayersFromFirstFile(File file) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader2 = new BufferedReader(new FileReader(file));		
+			
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = reader.readLine();
+			String last = "";
+			int lines = 0;
+			
+			while((line = reader.readLine()) != null) {
+				last = line;
+				lines++;
+		    }
+			
+			line = reader2.readLine();
+			
+			for(int i = lines; i>0; i--) {
+				sb.append(line);
+		        line = reader2.readLine();	
+		    }
+
+			LAYER_i = sb.toString().length();
+			LAYER_k = last.length();
+
+		} catch(IOException e) {
+			e.getMessage();
+		} finally {
+			reader.close();
+			reader2.close();
+		}
+	}
+	
 	public static List<File> getAllFiles() {
 		File file = new File(System.getProperty("user.dir").concat(PATH_FILE));
 		List<File> fileList = new ArrayList<>();

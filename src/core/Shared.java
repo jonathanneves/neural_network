@@ -19,10 +19,10 @@ public class Shared extends Layer implements Constants {
 	public static double Z[]; // SIGMOIDE CALCULADO
 	public static double Y[]; // SIGMOIDE CALCULADO
 
+	//NEW RESIZE ARRAYS
 	public static void setAllLayers(File file) throws IOException {
-		LAYER_i = FileManager.getCharsFromIndex(file).length;
-		LAYER_k = FileManager.getOutputFromIndex(file).length;
-		//RESIZE
+		FileManager.setLayersFromFirstFile(file);
+
 		inputs = new int[LAYER_i];
 		weightsV = new double[LAYER_i][LAYER_j];
 		weightsW = new double[LAYER_j][LAYER_k];
@@ -47,7 +47,7 @@ public class Shared extends Layer implements Constants {
 		
 		for(int k = 0; k < LAYER_k; k++) {
 			for(int j = 0; j < LAYER_j; j++) {
-				sum += Z[j] * weightsW[j][k] + biasW[0][k];
+				sum += Z[j] * weightsW[j][k];
 			}
 			sum += biasW[0][k];
 			Y[k] = sigmoid(sum);

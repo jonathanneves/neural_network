@@ -10,7 +10,7 @@ import utils.FileManager;
 
 public class NetworkTester extends Shared {
 	
-	DecimalFormat format = new DecimalFormat("#.####");  
+	DecimalFormat format = new DecimalFormat("#.#####");  
 	
 	public void startTest() throws IOException {
 		System.out.println("----------------------------");
@@ -22,17 +22,18 @@ public class NetworkTester extends Shared {
 	
 	private void checkResult() {
 		
-		double lesser = 999999999;
+		double greater = 0;
 		String result = "LETRA ENCONTRADA: ";
 		int output[] = new int[LAYER_k];
+		
 		for(int k = 0; k < LAYER_k; k++) {
 			System.out.println(Y[k]);
-			if(Y[k] < lesser) 
-				lesser = Y[k];
+			if(Shared.Y[k] > greater) 
+				greater = Shared.Y[k];
 		}	
 		
 		for(int k = 0; k < LAYER_k; k++) {
-			if(lesser == Y[k]) 
+			if(greater == Shared.Y[k]) 
 				output[k] = ONE_POSITIVE;
 			else 
 				output[k] = ZERO;
