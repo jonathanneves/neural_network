@@ -22,28 +22,28 @@ public class NetworkTester extends Shared {
 	
 	private void checkResult() {
 		
-		double greater = 0;
+		double lesser = 9999;
 		String result = "LETRA ENCONTRADA: ";
-		double output[] = new double[LAYER_k];
+		int output[] = new int[LAYER_k];
 				
 		for(int k = 0; k < LAYER_k; k++) {
 			System.out.println(Shared.Y[k]);
-			if(Y[k] > greater)
-				greater = Y[k];
+			if(Y[k] < lesser)
+				lesser = Y[k];
 		//	output[k] = threshold(Y[k]);
 		}
 		
 		for(int k=0; k < LAYER_k; k++) {
-			if(Y[k] == greater)
-				output[k] = ONE_POSITIVE;
+			if(Y[k] == lesser)
+				output[k] = 1;
 			else
-				output[k] = ZERO;
+				output[k] = 0;
 		}
 		
 		System.out.println("Saída: "+Arrays.toString(output));
 
 		for(int i = 0; i < LAYER_k; i++) {
-			if(output[i] == 1.0) {
+			if(output[i] == 1) {
 				if(i == 0) 
 					result += "A";
 				else if(i == 1) 
@@ -67,5 +67,5 @@ public class NetworkTester extends Shared {
 	
 	/*private int threshold(double output) {
 		return output >= THRESHOLD ? ONE_POSITIVE : ZERO;
-	}*/2
+	}*/
 }

@@ -27,23 +27,21 @@ public class NetworkTrainer extends Shared {
 		setAllLayers(fileList.get(0));
 		resizeArrays();
 		setRandomWeights();	
-		
-		for(int i = 0; i <fileList.size(); i++) {
-			fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
-			setTargetData(i);	
-			startNeuralNetwork();	
-		}
+		startNeuralNetwork();
 	}
 	
 	private void startNeuralNetwork() throws IOException {
 		int currentEpoch = 0;	
 		//while(MEAN_SQUARED_ERROR < calculateMSE()) { // Step 2		
 		while(NUMBER_OF_EPOCH != currentEpoch) {
-			calculateInput(); // Step 3, 4 and 5
-			calculateError(); // Step 6
-			calculateMSE();
-			calculateDelta(); // Step 7
-			adjustWeightsAndBias(); // Step 8
+			for(int i = 0; i <fileList.size(); i++) {
+				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
+				setTargetData(i);		
+				calculateInput(); // Step 3, 4 and 5
+				calculateError(); // Step 6
+				calculateDelta(); // Step 7
+				adjustWeightsAndBias(); // Step 8
+			}
 			currentEpoch++; //Step 9
 		}	
 	}
