@@ -13,8 +13,8 @@ public class Shared extends Layer implements Constants {
 	public static double weightsV[][];
 	public static double weightsW[][];
 	
-	public static double biasV[][];
-	public static double biasW[][];
+	public static double biasV[];
+	public static double biasW[];
 	
 	public static double Z[]; // SIGMOIDE CALCULADO
 	public static double Y[]; // SIGMOIDE CALCULADO
@@ -26,8 +26,8 @@ public class Shared extends Layer implements Constants {
 		inputs = new int[LAYER_i];
 		weightsV = new double[LAYER_i][LAYER_j];
 		weightsW = new double[LAYER_j][LAYER_k];
-		biasV = new double[LAYER_i][LAYER_j];
-		biasW = new double[LAYER_j][LAYER_k];
+		biasV = new double[LAYER_j];
+		biasW = new double[LAYER_k];
 		Z = new double[LAYER_j];
 		Y = new double[LAYER_k];
 	}
@@ -40,7 +40,7 @@ public class Shared extends Layer implements Constants {
 			for(int i = 0; i < LAYER_i; i++) {
 				sum += inputs[i] * weightsV[i][j];
 			}
-			sum += biasV[0][j];
+			//sum += biasV[j];
 			Z[j] = sigmoid(sum);
 			sum = 0;
 		}
@@ -49,25 +49,29 @@ public class Shared extends Layer implements Constants {
 			for(int j = 0; j < LAYER_j; j++) {
 				sum += Z[j] * weightsW[j][k];
 			}
-			sum += biasW[0][k];
+			//sum += biasW[k];
 			Y[k] = sigmoid(sum);
+			//System.out.println(Y[k]);
 			sum = 0;
 		}
+		
+		
 	}
 	
 	private double sigmoid(double x) {
-		return  (1 / (1 + (Math.pow(Math.E, (-1*x)))));
+		//return (2/ (1+ (Math.pow(Math.E, (-1*x)))))-1; //bipolar
+		return  (1 / (1 + (Math.pow(Math.E, (-1*x)))));  //binaria
 	}
 	
 	public void fillInputs(char[] letters) {
 		int index = 0;
 		for(char c : letters) {
 			if(c == HASHTAG) {
-				inputs[index] = ONE_POSITIVE;
+				inputs[index] = +1;
 			} else if (c == DOT) {
-				inputs[index] = ONE_NEGATIVE;
+				inputs[index] = -1;
 			} else {
-				inputs[index] = ZERO;
+				inputs[index] = 0;
 			}
 			index++;
 		}
