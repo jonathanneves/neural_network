@@ -22,19 +22,18 @@ public class NetworkTester extends Shared {
 	
 	private void checkResult() {
 		
-		double lesser = 9999;
+		double greater = 0;
 		String result = "LETRA ENCONTRADA: ";
 		int output[] = new int[LAYER_k];
 				
 		for(int k = 0; k < LAYER_k; k++) {
-			System.out.println(Shared.Y[k]);
-			if(Y[k] < lesser)
-				lesser = Y[k];
-		//	output[k] = threshold(Y[k]);
+			System.out.println(format.format(Shared.Y[k]));
+			if(Y[k] > greater)
+				greater = Y[k];
 		}
 		
 		for(int k=0; k < LAYER_k; k++) {
-			if(Y[k] == lesser)
+			if(Y[k] == greater)
 				output[k] = 1;
 			else
 				output[k] = 0;
@@ -62,7 +61,7 @@ public class NetworkTester extends Shared {
 		}
 		
 		System.out.println(result);
-		JOptionPane.showMessageDialog(null, result);
+		JOptionPane.showMessageDialog(null, result +"\nEstá Correto? Se não treine novamente.");
 	}
 	
 	/*private int threshold(double output) {

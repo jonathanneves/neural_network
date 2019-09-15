@@ -11,9 +11,8 @@ public interface Constants {
 	
 	// VARIAVEIS ADPTAVEIS
 	final double LEARNING_RATE = 0.2;	// TAXA DE APRENDIZADO 
-	final int NUMBER_OF_EPOCH = 1000;	// EPÓCAS
+	final int NUMBER_OF_EPOCH = 200;	// EPÓCAS
 	final double THRESHOLD = 0;
-	final double MEAN_SQUARED_ERROR = 0.5; 
 	
 	final String PATH_FILE = "/letters";
 	final String TEST_FILE_NAME = "TESTE.txt";

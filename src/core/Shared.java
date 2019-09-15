@@ -51,7 +51,6 @@ public class Shared extends Layer implements Constants {
 			}
 			//sum += biasW[k];
 			Y[k] = sigmoid(sum);
-			//System.out.println(Y[k]);
 			sum = 0;
 		}
 		

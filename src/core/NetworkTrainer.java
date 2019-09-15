@@ -31,16 +31,14 @@ public class NetworkTrainer extends Shared {
 	}
 	
 	private void startNeuralNetwork() throws IOException {
-		int currentEpoch = 0;	
-		//while(MEAN_SQUARED_ERROR < calculateMSE()) { // Step 2		
+		int currentEpoch = 0;		
 		while(NUMBER_OF_EPOCH != currentEpoch) {
 			for(int i = 0; i <fileList.size(); i++) {
 				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
-				setTargetData(i);		
-				calculateInput(); // Step 3, 4 and 5
-				calculateError(); // Step 6
-				calculateDelta(); // Step 7
-				adjustWeightsAndBias(); // Step 8
+				setTargetData(i);
+				
+				feedForward();
+				backpropagation();
 			}
 			currentEpoch++; //Step 9
 		}	
@@ -54,6 +52,16 @@ public class NetworkTrainer extends Shared {
 			else
 				target[i] = ONE_POSITIVE;
 		}
+	}
+	
+	private void feedForward() {
+		calculateInput();  // Step 3, 4 and 5
+	}
+	
+	private void backpropagation() {
+		calculateError(); // Step 6
+		calculateDelta(); // Step 7
+		adjustWeightsAndBias(); // Step 8
 	}
 	
 	private void setRandomWeights() {
@@ -87,7 +95,7 @@ public class NetworkTrainer extends Shared {
 		double sum = 0;
 		double mse = 0;
 		for(int k =  0; k < LAYER_k; k++) {
-			sum += (Math.pow(Y[k]-target[k],2));
+			sum += (Math.pow(target[k]-Y[k],2));
 		}
 		mse = sum/LAYER_k;
 		System.out.println("MSE: "+mse);
