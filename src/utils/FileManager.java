@@ -50,6 +50,8 @@ public class FileManager extends Layer implements Constants {
 			
 			while(reader.readLine() != null) lines++;
 
+			line = reader2.readLine();
+			
 			for(int i = lines; i>0; i--) {
 				sb.append(line);
 		        line = reader2.readLine();	
@@ -57,7 +59,7 @@ public class FileManager extends Layer implements Constants {
 			
 			if(sb.toString().length() != LAYER_i)
 				throw new InvalidFileException("Invalid number of characters");
-			
+
 			return sb.toString().toCharArray();
 		} catch(IOException e) {
 			e.getMessage();

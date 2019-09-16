@@ -32,21 +32,20 @@ public class NetworkTrainer extends Shared {
 	
 	private void startNeuralNetwork() throws IOException {
 		int currentEpoch = 0;		
-		while(NUMBER_OF_EPOCH != currentEpoch) {
+		while(NUMBER_OF_EPOCH >= currentEpoch) {
 			for(int i = 0; i <fileList.size(); i++) {
 				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
-				setTargetData(i);
-				
+				setTargetData(FileManager.getOutputFromIndex(fileList.get(i)));
 				feedForward();
 				backpropagation();
 			}
+			System.out.println("Epóca: "+currentEpoch);
 			currentEpoch++; //Step 9
 		}	
 	}
 	
-	private void setTargetData(int index) throws IOException {
-		char[] outputs = FileManager.getOutputFromIndex(fileList.get(index));
-		for(int i=0; i<outputs.length; i++) {
+	private void setTargetData(char[] outputs) throws IOException {
+		for(int i=0; i<outputs.length; i++) {		
 			if(outputs[i] == DOT)
 				target[i] = ONE_NEGATIVE;
 			else
@@ -70,7 +69,7 @@ public class NetworkTrainer extends Shared {
 		for(int i = 0; i < LAYER_i; i++) {
 			for(int j=0; j < LAYER_j; j++) {
 				Shared.weightsV[i][j] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
-				Shared.biasV[j] = ONE_POSITIVE;
+				Shared.biasV[j] = ZERO;
 			}
 		}
 		
@@ -78,7 +77,7 @@ public class NetworkTrainer extends Shared {
 		for(int j = 0; j < LAYER_j; j++) {
 			for(int k = 0; k < LAYER_k; k++) {
 				Shared.weightsW[j][k] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
-				Shared.biasW[k] = ONE_POSITIVE;
+				Shared.biasW[k] = ZERO;
 			}
 		}
 	}
@@ -88,10 +87,10 @@ public class NetworkTrainer extends Shared {
 		correctionFactorJ = new double[LAYER_j];
 		correctionFactorK = new double[LAYER_k];
 		deltaV = new double[LAYER_i][LAYER_j];
-		deltaW = new double[LAYER_i][LAYER_j];
+		deltaW = new double[LAYER_j][LAYER_k];
 	}
 	
-	private double calculateMSE() {
+	/*private double calculateMSE() {
 		double sum = 0;
 		double mse = 0;
 		for(int k =  0; k < LAYER_k; k++) {
@@ -100,21 +99,21 @@ public class NetworkTrainer extends Shared {
 		mse = sum/LAYER_k;
 		System.out.println("MSE: "+mse);
 		return mse;
-	}
+	}*/
 	
 	private void calculateError() {
 		
 		for(int k = 0; k < LAYER_k; k++) {
-			//correctionFactorK[k] = (target[k] - Shared.Y[k]) * ((1  * (1 + Shared.Y[k] * (1 - Shared.Y[k])))/2);
-			correctionFactorK[k] = (target[k] - Shared.Y[k]) * (Shared.Y[k] * (1 - Shared.Y[k]));  
+			correctionFactorK[k] = (target[k] - Shared.Y[k]) * ((1  *((1 + Shared.Y[k]) * (1 - Shared.Y[k])))/2);
+			//correctionFactorK[k] = (target[k] - Shared.Y[k]) * (Shared.Y[k] * (1 - Shared.Y[k]));  
 		}
 		
 		for(int j = 0; j < LAYER_j; j++) {		
 			for(int k = 0; k < LAYER_k; k++) {
 				correctionFactorJ[j] += correctionFactorK[k] * Shared.weightsW[j][k];
 			}
-			//correctionFactorJ[j] = correctionFactorJ[j]  * ((1 * (1 + Shared.Z[j] * (1 - Shared.Z[j])))/2);
-			correctionFactorJ[j] = correctionFactorJ[j] * (Shared.Z[j] * (1 - Shared.Z[j])); 
+			correctionFactorJ[j] = correctionFactorJ[j]  * ((1 * ((1 + Shared.Z[j])* (1 - Shared.Z[j])))/2);
+			//correctionFactorJ[j] = correctionFactorJ[j] * (Shared.Z[j] * (1 - Shared.Z[j])); 
 		}
 	}
 	
@@ -153,11 +152,11 @@ public class NetworkTrainer extends Shared {
 		}
 		
 		for(int k=0; k < LAYER_k; k++) {
-			Shared.biasW[k] += deltaW[0][k];
+			Shared.biasW[k] = deltaW[0][k];
 		}
 		
 		for(int j=0; j < LAYER_j; j++) {
-			Shared.biasV[j] += deltaV[0][j];
+			Shared.biasV[j] = deltaV[0][j];
 		}
 	}
 	
