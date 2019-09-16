@@ -90,30 +90,21 @@ public class NetworkTrainer extends Shared {
 		deltaW = new double[LAYER_j][LAYER_k];
 	}
 	
-	/*private double calculateMSE() {
-		double sum = 0;
-		double mse = 0;
-		for(int k =  0; k < LAYER_k; k++) {
-			sum += (Math.pow(target[k]-Y[k],2));
-		}
-		mse = sum/LAYER_k;
-		System.out.println("MSE: "+mse);
-		return mse;
-	}*/
+
 	
 	private void calculateError() {
 		
 		for(int k = 0; k < LAYER_k; k++) {
-			correctionFactorK[k] = (target[k] - Shared.Y[k]) * ((1  *((1 + Shared.Y[k]) * (1 - Shared.Y[k])))/2);
-			//correctionFactorK[k] = (target[k] - Shared.Y[k]) * (Shared.Y[k] * (1 - Shared.Y[k]));  
+			correctionFactorK[k] = (target[k] - Shared.Y[k]) * ((1  *((1 + Shared.Y[k]) * (1 - Shared.Y[k])))/2);	//F' Bipolar
+			//correctionFactorK[k] = (target[k] - Shared.Y[k]) * (Shared.Y[k] * (1 - Shared.Y[k]));	//F' Binário
 		}
 		
 		for(int j = 0; j < LAYER_j; j++) {		
 			for(int k = 0; k < LAYER_k; k++) {
 				correctionFactorJ[j] += correctionFactorK[k] * Shared.weightsW[j][k];
 			}
-			correctionFactorJ[j] = correctionFactorJ[j]  * ((1 * ((1 + Shared.Z[j])* (1 - Shared.Z[j])))/2);
-			//correctionFactorJ[j] = correctionFactorJ[j] * (Shared.Z[j] * (1 - Shared.Z[j])); 
+			correctionFactorJ[j] = correctionFactorJ[j]  * ((1 * ((1 + Shared.Z[j])* (1 - Shared.Z[j])))/2);	//F' Bipolar
+			//correctionFactorJ[j] = correctionFactorJ[j] * (Shared.Z[j] * (1 - Shared.Z[j]));	//F' Binário
 		}
 	}
 	
