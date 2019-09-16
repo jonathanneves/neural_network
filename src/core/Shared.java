@@ -2,11 +2,11 @@ package core;
 import java.io.File;
 import java.io.IOException;
 
-import constants.Constants;
-import model.Layer;
+import utils.Constants;
 import utils.FileManager;
+import utils.Variables;
 
-public class Shared extends Layer implements Constants {
+public class Shared {
 	
 	public static double inputs[];
 	
@@ -25,22 +25,22 @@ public class Shared extends Layer implements Constants {
 	public static void setAllLayers(File file) throws IOException {
 		FileManager.setLayersFromFirstFile(file);
 
-		inputs = new double[LAYER_i];
-		weightsV = new double[LAYER_i][LAYER_j];
-		weightsW = new double[LAYER_j][LAYER_k];
-		biasV = new double[LAYER_j];
-		biasW = new double[LAYER_k];
-		Z = new double[LAYER_j];
-		Y = new double[LAYER_k];
-		outputY = new double[LAYER_k];
+		inputs = new double[Variables.LAYER_i];
+		weightsV = new double[Variables.LAYER_i][Variables.LAYER_j];
+		weightsW = new double[Variables.LAYER_j][Variables.LAYER_k];
+		biasV = new double[Variables.LAYER_j];
+		biasW = new double[Variables.LAYER_k];
+		Z = new double[Variables.LAYER_j];
+		Y = new double[Variables.LAYER_k];
+		outputY = new double[Variables.LAYER_k];
 	}
 	
 	public void calculateInput() {
 		
 		double sum = 0;
 		
-		for(int j = 0; j < LAYER_j; j++) {
-			for(int i = 0; i < LAYER_i; i++) {
+		for(int j = 0; j < Variables.LAYER_j; j++) {
+			for(int i = 0; i < Variables.LAYER_i; i++) {
 				sum += inputs[i] * weightsV[i][j];
 				
 			}
@@ -49,8 +49,8 @@ public class Shared extends Layer implements Constants {
 			sum = 0;
 		}
 		
-		for(int k = 0; k < LAYER_k; k++) {
-			for(int j = 0; j < LAYER_j; j++) {
+		for(int k = 0; k < Variables.LAYER_k; k++) {
+			for(int j = 0; j < Variables.LAYER_j; j++) {
 				sum += Z[j] * weightsW[j][k];
 			}
 			sum += biasW[k];
@@ -70,12 +70,12 @@ public class Shared extends Layer implements Constants {
 	public void fillInputs(char[] letters) {
 		int index = 0;
 		for(char c : letters) {
-			if(c == HASHTAG) {
-				inputs[index] = ONE_POSITIVE;
-			} else if (c == DOT) {
-				inputs[index] = ONE_NEGATIVE;
+			if(c == Constants.HASHTAG) {
+				inputs[index] = Constants.ONE_POSITIVE;
+			} else if (c == Constants.DOT) {
+				inputs[index] = Constants.ONE_NEGATIVE;
 			} else {
-				inputs[index] = ZERO;
+				inputs[index] = Constants.ZERO;
 			}
 			index++;
 		}

@@ -7,15 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import constants.Constants;
 import exceptions.InvalidFileException;
-import model.Layer;
 
-public class FileManager extends Layer implements Constants {
+public class FileManager {
 
 	public static char[] getCharsFromTestFile() throws IOException {
 
-		File file = new File(System.getProperty("user.dir").concat(PATH_FILE).concat("/" + TEST_FILE_NAME));
+		File file = new File(System.getProperty("user.dir").concat(Constants.PATH_FILE).concat("/" + Constants.TEST_FILE_NAME));
 		System.out.println("Processando o arquivo: " + file.getName());
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 
@@ -57,7 +55,7 @@ public class FileManager extends Layer implements Constants {
 		        line = reader2.readLine();	
 		    }
 			
-			if(sb.toString().length() != LAYER_i)
+			if(sb.toString().length() != Variables.LAYER_i)
 				throw new InvalidFileException("Invalid number of characters");
 
 			return sb.toString().toCharArray();
@@ -80,7 +78,7 @@ public class FileManager extends Layer implements Constants {
 				last = line;
 		    }
 
-			if(last.length() != LAYER_k)
+			if(last.length() != Variables.LAYER_k)
 				throw new InvalidFileException("Invalid number of characters");		
 
 		    return last.toString().toCharArray();
@@ -115,8 +113,8 @@ public class FileManager extends Layer implements Constants {
 		        line = reader2.readLine();	
 		    }
 
-			LAYER_i = sb.toString().length();
-			LAYER_k = last.length();
+			Variables.LAYER_i = sb.toString().length();
+			Variables.LAYER_k = last.length();
 
 		} catch(IOException e) {
 			e.getMessage();
@@ -127,10 +125,10 @@ public class FileManager extends Layer implements Constants {
 	}
 	
 	public static List<File> getAllFiles() {
-		File file = new File(System.getProperty("user.dir").concat(PATH_FILE));
+		File file = new File(System.getProperty("user.dir").concat(Constants.PATH_FILE));
 		List<File> fileList = new ArrayList<>();
 		for (final File f : file.listFiles()) {
-			if (f.isFile() && !f.getName().equals(TEST_FILE_NAME)) {
+			if (f.isFile() && !f.getName().equals(Constants.TEST_FILE_NAME)) {
 				fileList.add(f);
 			}
 		}

@@ -6,7 +6,9 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
+import utils.Constants;
 import utils.FileManager;
+import utils.Variables;
 
 public class NetworkTester extends Shared {
 	
@@ -23,16 +25,16 @@ public class NetworkTester extends Shared {
 	private void checkResult() {
 		
 		String result = "LETRA ENCONTRADA: ";
-		int output[] = new int[LAYER_k];
+		int output[] = new int[Variables.LAYER_k];
 				
-		for(int k = 0; k < LAYER_k; k++) {
+		for(int k = 0; k < Variables.LAYER_k; k++) {
 			System.out.println(format.format(outputY[k]));
 			output[k] = (int)threshold(outputY[k]);
 		}
 
-		System.out.println("Saída: "+Arrays.toString(output));
+		System.out.println("Saída: " + Arrays.toString(output));
 
-		for(int i = 0; i < LAYER_k; i++) {
+		for(int i = 0; i < Variables.LAYER_k; i++) {
 			if(output[i] == 1) {
 				if(i == 0) 
 					result += "A";
@@ -56,6 +58,6 @@ public class NetworkTester extends Shared {
 	}
 	
 	private double threshold(double output) {
-		return output >= THRESHOLD ? ONE_POSITIVE : ONE_NEGATIVE;
+		return output >= Constants.THRESHOLD ? Constants.ONE_POSITIVE : Constants.ONE_NEGATIVE;
 	}
 }

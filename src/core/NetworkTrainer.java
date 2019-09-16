@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import utils.Constants;
 import utils.FileManager;
+import utils.Variables;
 
 public class NetworkTrainer extends Shared {
 
@@ -30,7 +32,7 @@ public class NetworkTrainer extends Shared {
 	
 	private void startNeuralNetwork() throws IOException {
 		int currentEpoch = 0;		
-		while(NUMBER_OF_EPOCH >= currentEpoch) {
+		while(Constants.NUMBER_OF_EPOCH >= currentEpoch) {
 			for(int i = 0; i <fileList.size(); i++) {
 				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
 				setTargetData(FileManager.getOutputFromIndex(fileList.get(i)));
@@ -44,10 +46,10 @@ public class NetworkTrainer extends Shared {
 	
 	private void setTargetData(char[] outputs) throws IOException {
 		for(int i=0; i<outputs.length; i++) {		
-			if(outputs[i] == DOT)
-				target[i] = ONE_NEGATIVE;
+			if(outputs[i] == Constants.DOT)
+				target[i] = Constants.ONE_NEGATIVE;
 			else
-				target[i] = ONE_POSITIVE;
+				target[i] = Constants.ONE_POSITIVE;
 		}
 	}
 	
@@ -64,41 +66,41 @@ public class NetworkTrainer extends Shared {
 	private void setRandomWeights() {
 		
 		//Weight V
-		for(int i = 0; i < LAYER_i; i++) {
-			for(int j=0; j < LAYER_j; j++) {
-				Shared.weightsV[i][j] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
-				Shared.biasV[j] = ZERO;
+		for(int i = 0; i < Variables.LAYER_i; i++) {
+			for(int j=0; j < Variables.LAYER_j; j++) {
+				Shared.weightsV[i][j] = ThreadLocalRandom.current().nextDouble(Constants.ONE_NEGATIVE, Constants.ONE_POSITIVE);
+				Shared.biasV[j] = Constants.ZERO;
 			}
 		}
 		
 		//Weight W
-		for(int j = 0; j < LAYER_j; j++) {
-			for(int k = 0; k < LAYER_k; k++) {
-				Shared.weightsW[j][k] = ThreadLocalRandom.current().nextDouble(ONE_NEGATIVE, ONE_POSITIVE);
-				Shared.biasW[k] = ZERO;
+		for(int j = 0; j < Variables.LAYER_j; j++) {
+			for(int k = 0; k < Variables.LAYER_k; k++) {
+				Shared.weightsW[j][k] = ThreadLocalRandom.current().nextDouble(Constants.ONE_NEGATIVE, Constants.ONE_POSITIVE);
+				Shared.biasW[k] = Constants.ZERO;
 			}
 		}
 	}
 	
 	private void resizeArrays() {
-		target = new double[LAYER_k];
-		correctionFactorJ = new double[LAYER_j];
-		correctionFactorK = new double[LAYER_k];
-		deltaV = new double[LAYER_i][LAYER_j];
-		deltaW = new double[LAYER_j][LAYER_k];
+		target = new double[Variables.LAYER_k];
+		correctionFactorJ = new double[Variables.LAYER_j];
+		correctionFactorK = new double[Variables.LAYER_k];
+		deltaV = new double[Variables.LAYER_i][Variables.LAYER_j];
+		deltaW = new double[Variables.LAYER_j][Variables.LAYER_k];
 	}
 	
 
 	
 	private void calculateError() {
 		
-		for(int k = 0; k < LAYER_k; k++) {
+		for(int k = 0; k < Variables.LAYER_k; k++) {
 			correctionFactorK[k] = (target[k] - Shared.Y[k]) * ((1  *((1 + Shared.Y[k]) * (1 - Shared.Y[k])))/2);	//F' Bipolar
 			//correctionFactorK[k] = (target[k] - Shared.Y[k]) * (Shared.Y[k] * (1 - Shared.Y[k]));	//F' Binário
 		}
 		
-		for(int j = 0; j < LAYER_j; j++) {		
-			for(int k = 0; k < LAYER_k; k++) {
+		for(int j = 0; j < Variables.LAYER_j; j++) {		
+			for(int k = 0; k < Variables.LAYER_k; k++) {
 				correctionFactorJ[j] += correctionFactorK[k] * Shared.weightsW[j][k];
 			}
 			correctionFactorJ[j] = correctionFactorJ[j]  * ((1 * ((1 + Shared.Z[j])* (1 - Shared.Z[j])))/2);	//F' Bipolar
@@ -107,44 +109,44 @@ public class NetworkTrainer extends Shared {
 	}
 	
 	private void calculateDelta() {
-		for(int j = 0; j < LAYER_j; j++) {
-			for(int k = 0; k < LAYER_k; k++) {
+		for(int j = 0; j < Variables.LAYER_j; j++) {
+			for(int k = 0; k < Variables.LAYER_k; k++) {
 				if(j==0)
-					deltaW[j][k] = LEARNING_RATE * correctionFactorK[k];
+					deltaW[j][k] = Constants.LEARNING_RATE * correctionFactorK[k];
 				else
-					deltaW[j][k] = LEARNING_RATE * correctionFactorK[k] * Shared.Z[j];
+					deltaW[j][k] = Constants.LEARNING_RATE * correctionFactorK[k] * Shared.Z[j];
 			}
 		}
 		
-		for(int i = 0; i < LAYER_i; i++) {
-			for(int j = 0; j < LAYER_j; j++) {
+		for(int i = 0; i < Variables.LAYER_i; i++) {
+			for(int j = 0; j < Variables.LAYER_j; j++) {
 				if(i==0)
-					deltaV[i][j] = LEARNING_RATE * correctionFactorJ[j];
+					deltaV[i][j] = Constants.LEARNING_RATE * correctionFactorJ[j];
 				else
-					deltaV[i][j] = LEARNING_RATE * correctionFactorJ[j] * Shared.inputs[i];
+					deltaV[i][j] = Constants.LEARNING_RATE * correctionFactorJ[j] * Shared.inputs[i];
 			}
 		}
 	}
 	
 	private void adjustWeightsAndBias() {
 		
-		for(int k = 0; k < LAYER_k; k++) {
-			for(int j = 0; j < LAYER_j; j++) {
+		for(int k = 0; k < Variables.LAYER_k; k++) {
+			for(int j = 0; j < Variables.LAYER_j; j++) {
 				Shared.weightsW[j][k] = Shared.weightsW[j][k] + deltaW[j][k];
 			}
 		}
 		
-		for(int j = 0; j < LAYER_j; j++) {
-			for(int i = 0; i < LAYER_i; i++) {
+		for(int j = 0; j < Variables.LAYER_j; j++) {
+			for(int i = 0; i < Variables.LAYER_i; i++) {
 				Shared.weightsV[i][j] = Shared.weightsV[i][j] + deltaV[i][j];
 			}
 		}
 		
-		for(int k=0; k < LAYER_k; k++) {
+		for(int k=0; k < Variables.LAYER_k; k++) {
 			Shared.biasW[k] = deltaW[0][k];
 		}
 		
-		for(int j=0; j < LAYER_j; j++) {
+		for(int j=0; j < Variables.LAYER_j; j++) {
 			Shared.biasV[j] = deltaV[0][j];
 		}
 	}
