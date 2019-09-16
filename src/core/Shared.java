@@ -2,9 +2,9 @@ package core;
 import java.io.File;
 import java.io.IOException;
 
-import utils.Constants;
+import resources.Constants;
+import resources.Variables;
 import utils.FileManager;
-import utils.Variables;
 
 public class Shared {
 	

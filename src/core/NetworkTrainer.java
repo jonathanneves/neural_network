@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import utils.Constants;
+import resources.Constants;
+import resources.Variables;
 import utils.FileManager;
-import utils.Variables;
 
 public class NetworkTrainer extends Shared {
 

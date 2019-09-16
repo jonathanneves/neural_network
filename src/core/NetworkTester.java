@@ -6,9 +6,9 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
-import utils.Constants;
+import resources.Constants;
+import resources.Variables;
 import utils.FileManager;
-import utils.Variables;
 
 public class NetworkTester extends Shared {
 	

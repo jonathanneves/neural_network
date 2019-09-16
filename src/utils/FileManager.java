@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exceptions.InvalidFileException;
+import resources.Constants;
+import resources.Variables;
 
 public class FileManager {
 
