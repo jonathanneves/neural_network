@@ -29,7 +29,7 @@ public class NetworkTester extends Shared {
 				
 		for(int k = 0; k < Variables.LAYER_k; k++) {
 			System.out.println(format.format(outputY[k]));
-			output[k] = (int)threshold(outputY[k]);
+			output[k] = threshold(outputY[k]);
 		}
 
 		System.out.println("Saída: " + Arrays.toString(output));
@@ -57,7 +57,7 @@ public class NetworkTester extends Shared {
 		JOptionPane.showMessageDialog(null, result +"\nEstá Correto? Se não treine novamente.");
 	}
 	
-	private double threshold(double output) {
+	private int threshold(double output) {
 		return output >= Constants.THRESHOLD ? Constants.ONE_POSITIVE : Constants.ONE_NEGATIVE;
 	}
 }

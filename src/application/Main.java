@@ -10,11 +10,23 @@ import core.NetworkTrainer;
 public class Main {	
 	/**
 	 * 	
-	 * @autor Jonathan Neves
-	 * @instrucao Para realizar o treinamento é necessário criar arquivos txt na pasta Letters com os símbolos de entrada conforme deseja.
-	 * OBS.: Todos txt deve ter mesmo número de simbolos
-	 * A última linha do txt é reservada para a saída desejada
-	 * Para teste mude o arquivo Teste.txt colocando os simbolos desejados para ser identiicado
+	 * @autor Jonathan Neves, Vilmar Mendes Jr, Adriano Karas
+	 * @instrucao
+	 * Como realizar o treinamento:
+	 * 1º Crie arquivos txt na pasta Letters com todos os inputs e na última linha do txt defina a saída desejada.
+	 * Os inputs devem seguir o padrão: '.' = -1 '#' = 1  'etc' = 0;
+	 * Os outputs devem seguir o padrão: '.' = -1 'etc' = 1;
+	 * OBS.: Todos os arquivos deve ter o mesmo número de inputs e de output.
+	 * 
+	 * Como realizar o teste:
+	 * 2º Crie um arquivo chamado TESTE.txt, coloque apenas os inputs para Rede Neural classificar no teste
+	 * OBS.: Deve ter o mesmo número de inputs que os outros arquivos.
+	 * 
+	 * Como configurar o algoritmo:
+	 * -Na classe Variables você pode definir o número de LAYER j desejado. Recomendado ser igual ao número de inputs.
+	 * -Na Classse Constants você pode definir o número de epócas em EPOCHS. É o número de vezes que o algoritmo vai realizar o treinamento antes de parar.
+	 * 
+	 * Execute o algoritmo, primeiro realize o treinamento (1) e depois realize o teste (2)
 	 */
 	public static void main(String[] args) throws IOException {
 		

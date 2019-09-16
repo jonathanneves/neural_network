@@ -8,7 +8,7 @@ import utils.FileManager;
 
 public class Shared {
 	
-	public static double inputs[];
+	public static int inputs[];
 	
 	public static double weightsV[][];
 	public static double weightsW[][];
@@ -25,7 +25,7 @@ public class Shared {
 	public static void setAllLayers(File file) throws IOException {
 		FileManager.setLayersFromFirstFile(file);
 
-		inputs = new double[Variables.LAYER_i];
+		inputs = new int[Variables.LAYER_i];
 		weightsV = new double[Variables.LAYER_i][Variables.LAYER_j];
 		weightsW = new double[Variables.LAYER_j][Variables.LAYER_k];
 		biasV = new double[Variables.LAYER_j];

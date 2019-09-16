@@ -11,7 +11,7 @@ import utils.FileManager;
 
 public class NetworkTrainer extends Shared {
 
-	private double target[];
+	private int target[];
 	
 	private double correctionFactorJ[];
 	private double correctionFactorK[];
@@ -26,25 +26,25 @@ public class NetworkTrainer extends Shared {
 		fileList = FileManager.getAllFiles();
 		setAllLayers(fileList.get(0));
 		resizeArrays();
-		setRandomWeights();	
+		setRandomWeights();	//Step 1
 		startNeuralNetwork();
 	}
 	
 	private void startNeuralNetwork() throws IOException {
 		int currentEpoch = 0;		
-		while(Constants.NUMBER_OF_EPOCH >= currentEpoch) {
+		while(Constants.EPOCHS >= currentEpoch) {  //Step 2 and 9
 			for(int i = 0; i <fileList.size(); i++) {
-				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); // Read all Text to Training each one
-				setTargetData(FileManager.getOutputFromIndex(fileList.get(i)));
+				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); //Read all Text to Training each one
+				setDataTarget(FileManager.getOutputFromIndex(fileList.get(i)));
 				feedForward();
 				backpropagation();
 			}
 			System.out.println("Epóca: "+currentEpoch);
-			currentEpoch++; //Step 9
+			currentEpoch++;
 		}	
 	}
 	
-	private void setTargetData(char[] outputs) throws IOException {
+	private void setDataTarget(char[] outputs) throws IOException {
 		for(int i=0; i<outputs.length; i++) {		
 			if(outputs[i] == Constants.DOT)
 				target[i] = Constants.ONE_NEGATIVE;
@@ -83,7 +83,7 @@ public class NetworkTrainer extends Shared {
 	}
 	
 	private void resizeArrays() {
-		target = new double[Variables.LAYER_k];
+		target = new int[Variables.LAYER_k];
 		correctionFactorJ = new double[Variables.LAYER_j];
 		correctionFactorK = new double[Variables.LAYER_k];
 		deltaV = new double[Variables.LAYER_i][Variables.LAYER_j];
