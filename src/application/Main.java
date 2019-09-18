@@ -26,7 +26,7 @@ public class Main {
 	 * -Na classe Variables você pode definir o número de LAYER j desejado. Recomendado ser igual ao número de inputs.
 	 * -Na Classse Constants você pode definir o número de epócas em EPOCHS. É o número de vezes que o algoritmo vai realizar o treinamento antes de parar.
 	 * 
-	 * Execute o algoritmo, primeiro realize o treinamento (1) e depois realize o teste (2)
+	 * Execute o algoritmo, primeiro realize o treinamento (1) e depois realize o teste (2).
 	 */
 	public static void main(String[] args) throws IOException {
 		
@@ -47,7 +47,7 @@ public class Main {
 						NetworkTester networkTester = new NetworkTester();
 						networkTester.startTest();	
 					}else {
-						JOptionPane.showMessageDialog(null, "É necessário treinar primeiro antes de realizar o teste!");
+						JOptionPane.showMessageDialog(null, "É necessário treinar a rede neural antes de realizar o teste!");
 					}
 					break;
 				case 3: 

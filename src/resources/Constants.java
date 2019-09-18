@@ -9,7 +9,7 @@ public class Constants {
 	public static final char HASHTAG = '#';
 	public static final char DOT = '.'; 
 	
-	// VARIAVEIS ADPTAVEIS
+	// VARIAVEIS ADAPTAVEIS
 	public static final double LEARNING_RATE = 0.2;	// TAXA DE APRENDIZADO 
 	public static final int EPOCHS = 100;	// EPÓCAS
 	public static final double THRESHOLD = 0;

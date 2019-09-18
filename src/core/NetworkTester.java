@@ -54,7 +54,7 @@ public class NetworkTester extends Shared {
 		}
 		
 		System.out.println(result);
-		JOptionPane.showMessageDialog(null, "Saída: "+Arrays.toString(output)+"\n"+result +"\nEstá Correto? Se não treine novamente.");
+		JOptionPane.showMessageDialog(null, "Saída: "+Arrays.toString(output)+"\n"+result +"\nEstá correto? Se não, treine novamente.");
 	}
 	
 	private int threshold(double output) {
