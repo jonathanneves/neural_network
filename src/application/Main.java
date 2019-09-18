@@ -52,6 +52,9 @@ public class Main {
 					break;
 				case 3: 
 					System.exit(0);
+				default:
+					JOptionPane.showMessageDialog(null, "Opção inválida!");
+					break;
 			}
 		}
 	}
