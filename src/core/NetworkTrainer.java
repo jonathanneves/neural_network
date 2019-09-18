@@ -39,7 +39,7 @@ public class NetworkTrainer extends Shared {
 				feedForward();
 				backpropagation();
 			}
-			System.out.println("Epóca: "+currentEpoch);
+			System.out.println("Epóca: "+currentEpoch+" - Treinando os arquivos...");
 			currentEpoch++;
 		}	
 	}

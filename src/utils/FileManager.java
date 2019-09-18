@@ -16,7 +16,7 @@ public class FileManager {
 	public static char[] getCharsFromTestFile() throws IOException {
 
 		File file = new File(System.getProperty("user.dir").concat(Constants.PATH_FILE).concat("/" + Constants.TEST_FILE_NAME));
-		System.out.println("Processando o arquivo: " + file.getName());
+		System.out.println("Testando o arquivo: " + file.getName());
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 
 		try {
@@ -28,7 +28,7 @@ public class FileManager {
 				line = reader.readLine();
 			}
 
-			System.out.println(sb.toString());
+			System.out.println("Entradas: "+sb.toString());
 			return sb.toString().toCharArray();
 		} catch (IOException e) {
 			e.getMessage();
@@ -39,7 +39,7 @@ public class FileManager {
 	}
 	
 	public static char[] getCharsFromIndex(File file) throws IOException {
-		System.out.println("Processando o arquivo: " + file.getName());
+		//System.out.println("Processando o arquivo: " + file.getName());
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		BufferedReader reader2 = new BufferedReader(new FileReader(file));
 		

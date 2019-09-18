@@ -16,7 +16,7 @@ public class NetworkTester extends Shared {
 	
 	public void startTest() throws IOException {
 		System.out.println("----------------------------");
-		System.out.println(">>Iniciado teste do arquivo");
+		System.out.println(">>Iniciado Teste do arquivo");
 		fillInputs(FileManager.getCharsFromTestFile());
 		calculateInput();
 		checkResult();
@@ -28,11 +28,11 @@ public class NetworkTester extends Shared {
 		int output[] = new int[Variables.LAYER_k];
 				
 		for(int k = 0; k < Variables.LAYER_k; k++) {
-			System.out.println(format.format(outputY[k]));
+			System.out.println("Saída "+(k+1)+": "+format.format(outputY[k]));
 			output[k] = threshold(outputY[k]);
 		}
 
-		System.out.println("Saída: " + Arrays.toString(output));
+		System.out.println("Saídas: " + Arrays.toString(output));
 
 		for(int i = 0; i < Variables.LAYER_k; i++) {
 			if(output[i] == 1) {
@@ -54,7 +54,7 @@ public class NetworkTester extends Shared {
 		}
 		
 		System.out.println(result);
-		JOptionPane.showMessageDialog(null, result +"\nEstá Correto? Se não treine novamente.");
+		JOptionPane.showMessageDialog(null, "Saída: "+Arrays.toString(output)+"\n"+result +"\nEstá Correto? Se não treine novamente.");
 	}
 	
 	private int threshold(double output) {
