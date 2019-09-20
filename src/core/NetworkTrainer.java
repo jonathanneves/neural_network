@@ -32,14 +32,14 @@ public class NetworkTrainer extends Shared {
 	
 	private void startNeuralNetwork() throws IOException {
 		int currentEpoch = 0;		
-		while(Constants.EPOCHS >= currentEpoch) {  //Step 2 and 9
+		while(Constants.EPOCHS > currentEpoch) {  //Step 2 and 9
 			for(int i = 0; i <fileList.size(); i++) {
 				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); //Read all Text to Training each one
 				setDataTarget(FileManager.getOutputFromIndex(fileList.get(i)));
 				feedForward();
 				backpropagation();
 			}
-			System.out.println("Epóca: "+currentEpoch+" - Treinando os arquivos...");
+			System.out.println("Epóca: "+(currentEpoch+1)+" - Treinando os arquivos...");
 			currentEpoch++;
 		}	
 	}
