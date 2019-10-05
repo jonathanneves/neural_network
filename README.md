@@ -1,6 +1,6 @@
 # Neural Network - Backpropagation
 
-Neural Network to read letters from txt files
+Neural Network to read letters is ASCII ART from txt files
 
 ## Instruções:
 
