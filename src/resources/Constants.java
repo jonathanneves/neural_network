@@ -14,7 +14,6 @@ public class Constants {
 	public static final int EPOCHS = 100;	// EPÓCAS
 	public static final double THRESHOLD = 0;
 	
-	public static final String PATH_FILE = "/letters";
-	public static final String TEST_FILE_NAME = "TESTE.txt";
+	public static final String TEST_FILE_NAME = "teste2.txt";
 
 }

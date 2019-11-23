@@ -1,63 +1,78 @@
 package core;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
+import model.Cliente;
 import resources.Constants;
 import resources.Variables;
-import utils.FileManager;
 
 public class NetworkTester extends Shared {
 	
 	DecimalFormat format = new DecimalFormat("#.#####");  
 	
-	public void startTest() throws IOException {
+	public void startTest() {
 		System.out.println("----------------------------");
 		System.out.println(">>Iniciado Teste do arquivo");
-		fillInputs(FileManager.getCharsFromTestFile());
-		calculateInput();
+		Cliente novoCliente = verificarNovoCliente();
+		fillInputsTest(novoCliente);
 		checkResult();
 	}
-	
+		
 	private void checkResult() {
 		
-		String result = "LETRA ENCONTRADA: ";
+		String result = "Análise de Depósito: ";
 		int output[] = new int[Variables.LAYER_k];
 				
 		for(int k = 0; k < Variables.LAYER_k; k++) {
-			System.out.println("Saída "+(k+1)+": "+format.format(outputY[k]));
+			System.out.println(outputY[k]);
 			output[k] = threshold(outputY[k]);
 		}
 
 		System.out.println("Saídas: " + Arrays.toString(output));
 
-		for(int i = 0; i < Variables.LAYER_k; i++) {
-			if(output[i] == 1) {
-				if(i == 0) 
-					result += "A";
-				else if(i == 1) 
-					result += "B";
-				else if(i == 2) 
-					result += "C";
-				else if(i == 3) 
-					result += "D";
-				else if(i == 4) 
-					result += "E";
-				else if(i == 5) 
-					result += "J";
-				else if(i == 6) 
-					result += "K";
-			}
-		}
+		/*if(output[0] == 1 && output[1] == 1) 
+			result += "Sucesso";
+		else if(output[0] == 1 && output[1] == 0)
+			result += "Outro";
+		else if(output[0] == 0 && output[1] == 1)
+			result += "Fracasso";
+		else if(output[0] == 0 && output[1] == 0)
+			result += "Desconhecido";*/
+		
 		
 		System.out.println(result);
-		JOptionPane.showMessageDialog(null, "Saída: "+Arrays.toString(output)+"\n"+result +"\nEstá correto? Se não, treine novamente.");
+		
+		JOptionPane.showMessageDialog(null, "Análise de Crédito: "+Arrays.toString(output)+"\n"+result);
+		int testarDenovo = Integer.parseInt(JOptionPane.showInputDialog("Você quer testar um novo cliente? Não(0), Sim(1)"));
+		if(testarDenovo == 0)
+			System.exit(0);
+		else if(testarDenovo == 1)
+			startTest();
+	}
+	
+	private Cliente verificarNovoCliente() {
+		Cliente cliente = new Cliente();
+		cliente.setJob(JOptionPane.showInputDialog("Trabalho: Unknown(0) - Admin(1) - Uneployed(2) - "
+				+ "Management(3) - Housemaid(4) - Entrepreneur(5) - Student(6) - Blue-collar(7) - Self-employed(8) -"
+				+ " Retire(9) Technician(10) - Services(11)"));
+		cliente.setMarital(JOptionPane.showInputDialog("Estado Civil: Married(0), Divorced(1), Single(2)"));
+		cliente.setEducation(JOptionPane.showInputDialog("Educação: Primary(0), Secondary(1), Tertiary(2)"));
+		cliente.setCreditDefault(JOptionPane.showInputDialog("Tem Crédito?: No(0) - Yes(1)"));
+		cliente.setBalance(Integer.parseInt(JOptionPane.showInputDialog("Média do balanço anual?")));
+		cliente.setHousing(JOptionPane.showInputDialog("Tem Empréstimo Casa?: No(0) - Yes(1)"));
+		cliente.setLoan(JOptionPane.showInputDialog("Tem Empréstimo Pessoal?: No(0) - Yes(1)"));
+		cliente.setCampaing(Integer.parseInt(JOptionPane.showInputDialog("Número de contratos durante a campanha")));
+		cliente.setPdays(Integer.parseInt(JOptionPane.showInputDialog("Número de dias após contrato")));
+		cliente.setPrevious(Integer.parseInt(JOptionPane.showInputDialog("Número de contratos antes da campanha")));
+		cliente.setHasTerm(JOptionPane.showInputDialog("Cliente tem contrato de depósito assinado?: No(0) - Yes(1)"));
+		
+		return cliente;
 	}
 	
 	private int threshold(double output) {
-		return output >= Constants.THRESHOLD ? Constants.ONE_POSITIVE : Constants.ONE_NEGATIVE;
+		return output >= Constants.THRESHOLD ? Constants.ONE_POSITIVE : Constants.ZERO;
 	}
 }

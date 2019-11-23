@@ -1,7 +1,6 @@
 /application/
-/constants/
 /core/
 /exceptions/
 /model/
-/utils/
 /resources/
+/utils/
