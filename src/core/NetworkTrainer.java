@@ -1,11 +1,10 @@
 package core;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import model.Cliente;
 import resources.Constants;
 import resources.Variables;
 import utils.FileManager;
@@ -20,45 +19,37 @@ public class NetworkTrainer extends Shared {
 	private double deltaV[][];
 	private double deltaW[][];
 	
-	public ArrayList<Cliente> clientes = new ArrayList<>();
+	private static List<File> fileList;
 	
 	public void startTraining() throws IOException {
 		System.out.println(">>Iniciado Treinamento");
-		clientes = FileManager.getDataFromFile();
-		setAllLayers();
+		fileList = FileManager.getAllFiles();
+		setAllLayers(fileList.get(0));
 		resizeArrays();
-		setMaxMinValues(clientes);
 		setRandomWeights();	//Step 1
 		startNeuralNetwork();
 	}
 	
 	private void startNeuralNetwork() throws IOException {
 		int currentEpoch = 0;		
-		while(Constants.EPOCHS > currentEpoch) {  //Step 2 and 9,
-			for(int i = 0; i<clientes.size(); i++) { 
-				fillInputsTrain(clientes.get(i)); //Read all Text to Training each one
-				setDataTarget(clientes.get(i));
+		while(Constants.EPOCHS > currentEpoch) {  //Step 2 and 9
+			for(int i = 0; i <fileList.size(); i++) {
+				fillInputs(FileManager.getCharsFromIndex(fileList.get(i))); //Read all Text to Training each one
+				setDataTarget(FileManager.getOutputFromIndex(fileList.get(i)));
 				feedForward();
 				backpropagation();
 			}
-			System.out.println("Epóca: "+(currentEpoch+1)+" - Treinando o dataset...");
+			System.out.println("Epóca: "+(currentEpoch+1)+" - Treinando os arquivos...");
 			currentEpoch++;
 		}	
 	}
 	
-	private void setDataTarget(Cliente c) throws IOException {
-		if(c.getPoutcome().equals("other")) {
-			target[0] = Constants.ONE_NEGATIVE;
-			target[1] = Constants.ONE_NEGATIVE;
-			target[2] = Constants.ONE_POSITIVE;
-		} else if(c.getPoutcome().equals("failure")) {
-			target[0] = Constants.ONE_NEGATIVE;
-			target[1] = Constants.ONE_POSITIVE;
-			target[2] = Constants.ONE_NEGATIVE;
-		} else if(c.getPoutcome().equals("success")) {
-			target[0] = Constants.ONE_POSITIVE;
-			target[1] = Constants.ONE_NEGATIVE;
-			target[2] = Constants.ONE_NEGATIVE;
+	private void setDataTarget(char[] outputs) throws IOException {
+		for(int i=0; i<outputs.length; i++) {		
+			if(outputs[i] == Constants.DOT)
+				target[i] = Constants.ONE_NEGATIVE;
+			else
+				target[i] = Constants.ONE_POSITIVE;
 		}
 	}
 	
@@ -92,11 +83,11 @@ public class NetworkTrainer extends Shared {
 	}
 	
 	private void resizeArrays() {
+		target = new int[Variables.LAYER_k];
 		correctionFactorJ = new double[Variables.LAYER_j];
 		correctionFactorK = new double[Variables.LAYER_k];
 		deltaV = new double[Variables.LAYER_i][Variables.LAYER_j];
 		deltaW = new double[Variables.LAYER_j][Variables.LAYER_k];
-		target = new int[Variables.LAYER_k];
 	}
 	
 
@@ -106,8 +97,6 @@ public class NetworkTrainer extends Shared {
 		for(int k = 0; k < Variables.LAYER_k; k++) {
 			correctionFactorK[k] = (target[k] - Shared.Y[k]) * ((1  *((1 + Shared.Y[k]) * (1 - Shared.Y[k])))/2);	//F' Bipolar
 			//correctionFactorK[k] = (target[k] - Shared.Y[k]) * (Shared.Y[k] * (1 - Shared.Y[k]));	//F' Binário
-			//System.out.println("ERRO J: "+correctionFactorJ[k]);
-
 		}
 		
 		for(int j = 0; j < Variables.LAYER_j; j++) {		
@@ -116,7 +105,6 @@ public class NetworkTrainer extends Shared {
 			}
 			correctionFactorJ[j] = correctionFactorJ[j]  * ((1 * ((1 + Shared.Z[j])* (1 - Shared.Z[j])))/2);	//F' Bipolar
 			//correctionFactorJ[j] = correctionFactorJ[j] * (Shared.Z[j] * (1 - Shared.Z[j]));	//F' Binário
-			//System.out.println("ERRO J: "+correctionFactorJ[j]);
 		}
 	}
 	
@@ -146,13 +134,19 @@ public class NetworkTrainer extends Shared {
 			for(int j = 0; j < Variables.LAYER_j; j++) {
 				Shared.weightsW[j][k] = Shared.weightsW[j][k] + deltaW[j][k];
 			}
-			Shared.biasW[k] = deltaW[0][k];
 		}
 		
 		for(int j = 0; j < Variables.LAYER_j; j++) {
 			for(int i = 0; i < Variables.LAYER_i; i++) {
 				Shared.weightsV[i][j] = Shared.weightsV[i][j] + deltaV[i][j];
 			}
+		}
+		
+		for(int k=0; k < Variables.LAYER_k; k++) {
+			Shared.biasW[k] = deltaW[0][k];
+		}
+		
+		for(int j=0; j < Variables.LAYER_j; j++) {
 			Shared.biasV[j] = deltaV[0][j];
 		}
 	}
